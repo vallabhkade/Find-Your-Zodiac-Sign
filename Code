@@ -1,0 +1,104 @@
+import datetime
+import random
+import tkinter as tk
+from tkinter import messagebox
+
+def get_zodiac_sign(day, month):
+    zodiac_signs = [
+        ("Capricorn", (1, 20)),
+        ("Aquarius", (2, 18)),
+        ("Pisces", (3, 20)),
+        ("Aries", (4, 20)),
+        ("Taurus", (5, 21)),
+        ("Gemini", (6, 21)),
+        ("Cancer", (7, 22)),
+        ("Leo", (8, 23)),
+        ("Virgo", (9, 23)),
+        ("Libra", (10, 23)),
+        ("Scorpio", (11, 22)),
+        ("Sagittarius", (12, 21)),
+        ("Capricorn", (12, 31))
+    ]
+    
+    for sign, (m, d) in zodiac_signs:
+        if (month, day) <= (m, d):
+            return sign
+    return "Capricorn"
+
+def generate_prediction():
+    predictions = [
+        "You will have a lucky day soon!",
+        "An exciting opportunity awaits you.",
+        "You will make a new friend in an unexpected way.",
+        "A surprise will come your way.",
+        "You might receive good news related to work or family.",
+        "It's a good time to focus on self-care and health.",
+        "An old friend may reconnect with you soon.",
+        "Be ready for a pleasant surprise in your finances."
+    ]
+    return random.choice(predictions)
+
+def predict_future(birth_date, birth_time):
+    day = birth_date.day
+    month = birth_date.month
+    
+    zodiac_sign = get_zodiac_sign(day, month)
+    random.seed(birth_date.toordinal() + birth_time.hour + birth_time.minute)
+    
+    prediction = generate_prediction()
+    
+    return f"Zodiac Sign: {zodiac_sign}\nPrediction: {prediction}"
+
+# GUI Code
+def on_submit():
+    try:
+        day = int(day_entry.get())
+        month = int(month_entry.get())
+        year = int(year_entry.get())
+        hour = int(hour_entry.get())
+        minute = int(minute_entry.get())
+        
+        birth_date = datetime.date(year, month, day)
+        birth_time = datetime.time(hour, minute)
+        
+        result = predict_future(birth_date, birth_time)
+        messagebox.showinfo("Your Prediction", result)
+    except ValueError:
+        messagebox.showerror("Input Error", "Please enter valid date and time values.")
+
+# Setting up the tkinter window
+app = tk.Tk()
+app.title("Future Predictor")
+app.geometry("300x250")
+
+# Adding input fields
+tk.Label(app, text="Enter Your Birth Date:", font=("Arial", 12)).grid(row=0, column=0, columnspan=2, pady=(10, 0))
+
+tk.Label(app, text="Day:").grid(row=1, column=0, sticky="e")
+day_entry = tk.Entry(app, width=5)
+day_entry.grid(row=1, column=1, sticky="w")
+
+tk.Label(app, text="Month:").grid(row=2, column=0, sticky="e")
+month_entry = tk.Entry(app, width=5)
+month_entry.grid(row=2, column=1, sticky="w")
+
+tk.Label(app, text="Year:").grid(row=3, column=0, sticky="e")
+year_entry = tk.Entry(app, width=5)
+year_entry.grid(row=3, column=1, sticky="w")
+
+tk.Label(app, text="Enter Your Birth Time:", font=("Arial", 12)).grid(row=4, column=0, columnspan=2, pady=(10, 0))
+
+tk.Label(app, text="Hour (24-hour format):").grid(row=5, column=0, sticky="e")
+hour_entry = tk.Entry(app, width=5)
+hour_entry.grid(row=5, column=1, sticky="w")
+
+tk.Label(app, text="Minute:").grid(row=6, column=0, sticky="e")
+minute_entry = tk.Entry(app, width=5)
+minute_entry.grid(row=6, column=1, sticky="w")
+
+# Submit button
+submit_button = tk.Button(app, text="Get Prediction", command=on_submit)
+submit_button.grid(row=7, column=0, columnspan=2, pady=10)
+
+# Run the application
+app.mainloop()
